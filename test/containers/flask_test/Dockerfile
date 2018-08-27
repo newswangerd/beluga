@@ -14,4 +14,4 @@ CMD [ "flask", "run", "--host=0.0.0.0" ]
 
 EXPOSE 5000
 
-HEALTHCHECK CMD curl --fail http://localhost:5000/health
+HEALTHCHECK --interval=5s --timeout=3s --start-period=2s CMD curl --fail http://localhost:5000/health
