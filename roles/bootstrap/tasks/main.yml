@@ -1,0 +1,48 @@
+---
+- name: install epel
+  include_role:
+    name: goozbach.EPEL
+
+- name: install yum packages
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - python-pip
+    - docker
+
+- name: install docker-py
+  pip:
+    name: docker-py
+
+- name: start docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: download traefik
+  docker_image:
+    name: traefik:latest
+    force: yes
+
+- name: create traefik network
+  docker_network:
+    name: webgateway
+    state: present
+
+- name: start traefik
+  docker_container:
+    name: proxy
+    image: traefik
+    # command: --web --docker --docker.domain=docker.localhost --logLevel=DEBUG
+    command: --docker --docker.domain=docker.localhost
+    restart_policy: always
+    recreate: yes
+    networks:
+      - name: webgateway
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
