@@ -1,0 +1,17 @@
+---
+pods:
+  test-pod:
+    replicas: 2
+    containers:
+      - name: flask-test
+        image: newswangerd/flask-test-app
+        service:
+          entry_port: 5000
+          url: test.localhost
+          name: backend1
+      - name: flask-test-2
+        image: newswangerd/flask-test-app
+        service:
+          entry_port: 5000
+          url: test.localhost
+          name: backend2

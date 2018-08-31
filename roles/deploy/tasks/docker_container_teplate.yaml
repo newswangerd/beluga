@@ -1,0 +1,23 @@
+- debug:
+    var: container
+
+- debug:
+    var: service
+
+- name: start container {{ container.name }}
+  docker_container:
+    name: "{{ pod_name }}-{{ container.name }}-{{ item2 }}"
+    image: "{{ container.image }}"
+    networks:
+      - name: webgateway
+    recreate: true
+    labels:
+      traefik.backend: '{{ container.service.name }}'
+      traefik.frontend.rule: "Host:{{ container.service.url }}"
+      traefik.port: "{{ container.service.entry_port }}"
+      # traefik.frontend.entryPoints: "http"
+      traefik.backend.loadbalancer.stickiness: "true"
+      pod: '{{ pod_name }}'
+  with_sequence: end='{{ replicas }}'
+  loop_control:
+    loop_var: item2

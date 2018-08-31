@@ -1,0 +1,19 @@
+---
+- name: Ensure required variables are defined
+  fail:
+    msg: "{{ item }} value missing and is required."
+  when: "{{ item }} is not defined"
+  with_items:
+    - pods
+    - to_deploy
+
+- debug:
+    var: role_path
+
+- name: docker template
+  include_tasks: "docker_container_teplate.yaml"
+  vars:
+    container: '{{ item }}'
+    pod_name: 'to_deploy'
+    replicas: '{{ pods[to_deploy].replicas }}'
+  with_items: '{{ pods[to_deploy].containers }}'

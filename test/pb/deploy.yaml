@@ -1,0 +1,10 @@
+---
+- hosts: node1
+  become: yes
+  become_user: root
+  vars_files:
+  - configs/flask_test.yaml
+  vars:
+    to_deploy: "test-pod"
+  roles:
+    - ../roles/deploy
